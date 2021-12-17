@@ -1,6 +1,7 @@
 *.box
 .vagrant
 Vagrantfile
+*.box.icloud
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
