@@ -13,6 +13,12 @@ class Tweet(models.Model):
     content = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # 建立 user 和 created_at 的联合索引 (composite index), 相当于在数据库里新建了一个索引表单
+    # 建立了索引后也需要做migration
+    class Meta:
+        index_together = (('user', 'created_at'), )
+        ordering = ('user', '-created_at')
+
     @property
     def hours_to_now(self):
         # datetime.now不带时区信息，django的DateTimeField是带时区信息的，两者不能直接相减
