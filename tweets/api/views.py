@@ -15,7 +15,7 @@ class TweetViewSet(viewsets.GenericViewSet):
     # 根据当前用户信息获取相应的推文
     def list(self, request):
         if "user_id" not in request.query_params:
-            return Response('missing user_id', status=400)
+            return Response({'message': 'missing user_id'}, status=400)
 
         tweets = Tweet.objects.filter(
             user_id=request.query_params['user_id']
