@@ -47,6 +47,7 @@ class FriendshipApiTests(TestCase):
         # follow 成功
         response = self.dongxie_client.post(url)
         self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.data['success'], True)
         # 重复 follow 静默成功
         response = self.dongxie_client.post(url)
         self.assertEqual(response.status_code, 201)
