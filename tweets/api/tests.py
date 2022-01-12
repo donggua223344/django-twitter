@@ -17,7 +17,7 @@ class TweetApiTests(TestCase):
         self.user1 = self.create_user('user1', 'user1@twitter.com')
         self.tweets1 = [
             self.create_tweet(self.user1)
-            for i in range(3)
+            for _ in range(3)
         ]
 
         # user1_client 会登陆
@@ -27,7 +27,7 @@ class TweetApiTests(TestCase):
         self.user2 = self.create_user('user2', 'user2@twitter.com')
         self.tweets2 = [
             self.create_tweet(self.user2)
-            for i in range(2)
+            for _ in range(2)
         ]
 
     def test_list_api(self):
@@ -77,9 +77,3 @@ class TweetApiTests(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data['user']['id'], self.user1.id)
         self.assertEqual(Tweet.objects.count(), tweets_count + 1)
-
-
-
-
-
-
