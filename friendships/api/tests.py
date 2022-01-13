@@ -91,10 +91,7 @@ class FriendshipApiTests(TestCase):
         # get is ok
         response = self.anonymous_client.get(url)
         self.assertEqual(response.status_code, 200)
-        print(response.data['followings'])
         self.assertEqual(len(response.data['followings']), 3)
-        print(response.data['followings'][0]['user']['username'])
-        print(response.data['followings'][1]['user']['username'])
         # 确保按照时间倒序
         ts0 = response.data['followings'][0]['created_at']
         ts1 = response.data['followings'][1]['created_at']
