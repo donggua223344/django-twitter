@@ -1,6 +1,7 @@
 from django.test import TestCase as DjangoTestCase
 from django.contrib.auth.models import User
 from tweets.models import Tweet
+from rest_framework.test import APIClient
 
 
 # 因为基本所有的测试都需要创建用户或者创建推文，我们就在这里创建两个通用的函数
@@ -19,3 +20,11 @@ class TestCase(DjangoTestCase):
         if content is None:
             content = 'default tweet content'
         return Tweet.objects.create(user=user, content=content)
+
+    @property
+    def anonymous_client(self):
+        if hasattr(self, '_anonymous_client'):
+            return self._anonymous_client
+        self._anonymous_client = APIClient()
+        return self._anonymous_client
+

@@ -4,7 +4,7 @@ from tweets.models import Tweet
 
 
 # Create your models here.
-class NewsFeeds(models.Model):
+class NewsFeed(models.Model):
     # 这里的user是指谁可以看到这条帖子
     # 比如说某个人有3个粉丝，那么这个人发帖后，newsfeed会出现3条新的记录
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
