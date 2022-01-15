@@ -1,7 +1,8 @@
-from django.test import TestCase as DjangoTestCase
+from comments.models import Comment
 from django.contrib.auth.models import User
-from tweets.models import Tweet
+from django.test import TestCase as DjangoTestCase
 from rest_framework.test import APIClient
+from tweets.models import Tweet
 
 
 # 因为基本所有的测试都需要创建用户或者创建推文，我们就在这里创建两个通用的函数
@@ -20,6 +21,12 @@ class TestCase(DjangoTestCase):
         if content is None:
             content = 'default tweet content'
         return Tweet.objects.create(user=user, content=content)
+
+    # 创建新评论
+    def create_comment(self, user, tweet, content=None):
+        if content is None:
+            content = 'default comment content'
+        return Comment.objects.create(user=user, tweet=tweet, content=content)
 
     @property
     def anonymous_client(self):
