@@ -6,6 +6,14 @@ from tweets.models import Tweet
 # Create your models here.
 class Comment(models.Model):
     """
+    关于命名规范
+    User is the name of the model
+    user is instance of User
+    user_id is the primary key of User, in the form of integer by dafault
+    users -> a list of user or a queryset of User
+    """
+
+    """
     某一条评论只能对应一个推文，但一个推文下面有多个评论
     某一条评论只能对应一个用户，但一个用户可以发布多条评论
     """
