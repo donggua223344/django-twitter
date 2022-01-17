@@ -17,6 +17,7 @@ class CommentViewSet(viewsets.GenericViewSet):
     """
     serializer_class = CommentSerializerForCreate
     queryset = Comment.objects.all()
+    filterset_fields = ('tweet_id',)
 
     """
     POST /api/comments/--> create
@@ -26,6 +27,23 @@ class CommentViewSet(viewsets.GenericViewSet):
     PATCH /api/comments/1/ --> partial_update
     PUT /api/comments/1/ --> update
     """
+
+    def list(self, request, *args, **kwargs):
+        if 'tweet_id' not in request.query_params:
+            return Response(
+                {
+                    'message': 'missing tweet_id in request',
+                    'success': False,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        queryset = self.get_queryset()
+        comments = self.filter_queryset(queryset).order_by('created_at')
+        serializer = CommentSerializer(comments, many=True)
+        return Response(
+            {'comments': serializer.data},
+            status=status.HTTP_200_OK,
+        )
 
     def get_permissions(self):
         # 注意要加用 AllowAny() / IsAuthenticated() 实例化出对象
@@ -51,7 +69,7 @@ class CommentViewSet(viewsets.GenericViewSet):
                 'errors': serializer.errors,
             }, status=status.HTTP_400_BAD_REQUEST)
 
-            # save 方法会触发 serializer 里的 create 方法，点进 save 的具体实现里可以看到
+        # save 方法会触发 serializer 里的 create 方法，点进 save 的具体实现里可以看到
         comment = serializer.save()
         return Response(
             CommentSerializer(comment).data,
@@ -86,3 +104,4 @@ class CommentViewSet(viewsets.GenericViewSet):
         comment.delete()
 
         return Response({'success': True}, status=status.HTTP_200_OK)
+
