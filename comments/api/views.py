@@ -8,6 +8,7 @@ from comments.models import Comment
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from utils.decorators import required_params
 
 
 class CommentViewSet(viewsets.GenericViewSet):
@@ -27,16 +28,8 @@ class CommentViewSet(viewsets.GenericViewSet):
     PATCH /api/comments/1/ --> partial_update
     PUT /api/comments/1/ --> update
     """
-
+    @required_params(params=['tweet_id'])
     def list(self, request, *args, **kwargs):
-        if 'tweet_id' not in request.query_params:
-            return Response(
-                {
-                    'message': 'missing tweet_id in request',
-                    'success': False,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
         queryset = self.get_queryset()
         comments = self.filter_queryset(queryset).order_by('created_at')
         serializer = CommentSerializer(comments, many=True)
@@ -104,4 +97,3 @@ class CommentViewSet(viewsets.GenericViewSet):
         comment.delete()
 
         return Response({'success': True}, status=status.HTTP_200_OK)
-
