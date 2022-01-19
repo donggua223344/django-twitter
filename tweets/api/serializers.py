@@ -2,22 +2,55 @@ from rest_framework import serializers
 from tweets.models import Tweet
 from accounts.api.serializers import UserSerializerForTweet
 from comments.api.serializers import CommentSerializer
+from likes.services import LikeService
+from likes.api.serializers import LikeSerializer
 
 
 class TweetSerializer(serializers.ModelSerializer):
     user = UserSerializerForTweet()
+    # SerializerMethodField() 可以完全自定义return的格式，下面必须有对应的get_XXX的函数
+    comments_count = serializers.SerializerMethodField()
+    likes_count = serializers.SerializerMethodField()
+    has_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Tweet
-        fields = ('id', 'user', 'created_at', 'content',)
+        fields = ('id',
+                  'user',
+                  'created_at',
+                  'content',
+                  'comments_count',
+                  'likes_count',
+                  'has_liked',)
+
+    def get_likes_count(self, obj):
+        return obj.like_set.count()
+
+    def get_comments_count(self, obj):
+        return obj.comment_set.count()
+
+    def get_has_liked(self, obj):
+        return LikeService.has_liked(self.context['request'].user, obj)
 
 
-class TweetSerializerWithComments(TweetSerializer):
+class TweetSerializerForDetail(TweetSerializer):
     comments = CommentSerializer(source='comment_set', many=True)
+    likes = LikeSerializer(source='like_set', many=True)
 
     class Meta:
         model = Tweet
-        fields = ('id', 'user', 'created_at', 'content', 'comments',)
+        fields = (
+            'id',
+            'user',
+            'comments',
+            'created_at',
+            'content',
+            'likes',
+            'comments',
+            'likes_count',
+            'comments_count',
+            'has_liked',
+        )
 
 
 class TweetSerializerForCreate(serializers.ModelSerializer):
