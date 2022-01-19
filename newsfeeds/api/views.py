@@ -15,7 +15,10 @@ class NewsFeedViewSet(viewsets.GenericViewSet):
 
     # 返回被序列化的Newsfeed实例
     def list(self, request):
-        serializer = NewsFeedSerializer(self.get_queryset(), many=True)
+        serializer = NewsFeedSerializer(
+            self.get_queryset(),
+            context={'request': request},
+            many=True)
         return Response({
             'newsfeeds': serializer.data,
         }, status=status.HTTP_200_OK)
