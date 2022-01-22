@@ -38,6 +38,8 @@ class CommentViewSet(viewsets.GenericViewSet):
             status=status.HTTP_200_OK,
         )
 
+    # 因为默认的方法 (destroy, update...) 没法通过 @action 来自定义权限，所以这里需要一个get_permission方法来
+    # 如果是加在开头的 permission_classes = [IsAuthenticated], 那就是针对所有的方法，并没有针对具体的操作做区分
     def get_permissions(self):
         # 注意要加用 AllowAny() / IsAuthenticated() 实例化出对象
         # 而不是 AllowAny / IsAuthenticated 这样只是一个类名

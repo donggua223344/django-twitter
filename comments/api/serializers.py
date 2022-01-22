@@ -13,6 +13,7 @@ class CommentSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField()
     has_liked = serializers.SerializerMethodField()
 
+    # 从数据库读取并展示的时候，只要可以在model里面可以找到或者访问的属性，在Serializer里面就不需要再创建一遍
     class Meta:
         model = Comment
         fields = (
@@ -33,7 +34,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializerForCreate(serializers.ModelSerializer):
-    # 这两项必须手动添加
+    # 从前端读取并创建的时候，在这两项必须手动添加
     # 因为默认 ModelSerializer 里只会自动包含 user 和 tweet 而不是 user_id 和 tweet_id
     tweet_id = serializers.IntegerField()
     user_id = serializers.IntegerField()
