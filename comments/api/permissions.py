@@ -9,6 +9,9 @@ class IsObjectOwner(BasePermission):
     - 如果是 detail=False 的 action，只检测 has_permission
     - 如果是 detail=True 的 action，同时检测 has_permission 和 has_object_permission
     如果出错的时候，默认的错误信息会显示 IsObjectOwner.message 中的内容
+
+    如果访问 /api/tweets/          这是 detail=False
+    如果访问 /api/tweets/<id>/     这是 detail=True
     """
     message = "You do not have permission to access this object"
 
