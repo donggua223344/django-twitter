@@ -92,6 +92,9 @@ class AccountViewSet(viewsets.ViewSet):
         # create the user if validated
         user = serializer.save()
 
+        # create UserProfile object
+        user.profile
+
         # login automatically after signup
         django_login(request, user)
 
