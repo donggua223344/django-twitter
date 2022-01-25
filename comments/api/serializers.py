@@ -1,4 +1,4 @@
-from accounts.api.serializers import UserSerializer
+from accounts.api.serializers import UserSerializerForComment
 from comments.models import Comment
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -9,7 +9,7 @@ from likes.services import LikeService
 class CommentSerializer(serializers.ModelSerializer):
     # 如果不加这个user = UserSerializer(), 那么下面fields里面的user会以user_id的形式展现
     # Serializer套Serializer不宜套得太深
-    user = UserSerializer()
+    user = UserSerializerForComment()
     likes_count = serializers.SerializerMethodField()
     has_liked = serializers.SerializerMethodField()
 
