@@ -3,6 +3,7 @@
 Vagrantfile
 *.box.icloud
 .idea
+media
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -56,6 +57,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+
 
 # Translations
 *.mo
