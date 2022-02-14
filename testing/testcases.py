@@ -6,6 +6,7 @@ from likes.models import Like
 from rest_framework.test import APIClient
 from tweets.models import Tweet
 from newsfeeds.models import NewsFeed
+from django.core.cache import caches
 
 
 # 因为基本所有的测试都需要创建用户或者创建推文，我们就在这里创建两个通用的函数
@@ -56,3 +57,6 @@ class TestCase(DjangoTestCase):
 
     def create_newsfeed(self, user, tweet):
         return NewsFeed.objects.create(user=user, tweet=tweet)
+
+    def clear_cache(self):
+        caches['testing'].clear()
