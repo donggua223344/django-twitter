@@ -1,3 +1,4 @@
+from accounts.services import UserService
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -6,7 +7,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 
 # Create your models here.
 class Like(models.Model):
-    object_id = models.PositiveIntegerField() # tweet_id or comment_id
+    object_id = models.PositiveIntegerField()  # tweet_id or comment_id
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.SET_NULL,
@@ -32,3 +33,6 @@ class Like(models.Model):
             self.object_id,
         )
 
+    @property
+    def cached_user(self):
+        return UserService.get_user_through_cache(self.user_id)

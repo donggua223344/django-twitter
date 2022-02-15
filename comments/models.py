@@ -3,6 +3,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from likes.models import Like
 from tweets.models import Tweet
+from accounts.services import UserService
+
 
 # Create your models here.
 class Comment(models.Model):
@@ -10,7 +12,7 @@ class Comment(models.Model):
     关于命名规范
     User is the name of the model
     user is instance of User
-    user_id is the primary key of User, in the form of integer by dafault
+    user_id is the primary key of User, in the form of integer by default
     users -> a list of user or a queryset of User
     """
 
@@ -42,3 +44,7 @@ class Comment(models.Model):
             content_type=ContentType.objects.get_for_model(Comment),
             object_id=self.id,
         ).order_by('-created_at')
+
+    @property
+    def cached_user(self):
+        return UserService.get_user_through_cache(self.user_id)
