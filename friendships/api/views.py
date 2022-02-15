@@ -62,8 +62,6 @@ class FriendshipViewSet(viewsets.GenericViewSet):
                 'errors': serializer.errors,
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        # Clear the cache when there is a follow action
-        FriendshipService.invalidate_following_cache(request.user.id)
         # save() will call create() method in FriendshipSerializerForCreate
         serializer.save()
 
@@ -84,7 +82,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
             from_user=request.user,
             to_user=pk,
         ).delete()
-        FriendshipService.invalidate_following_cache(request.user.id)
+
         return Response({'success': True, 'deleted': deleted})
 
     def list(self, request):
