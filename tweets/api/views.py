@@ -7,6 +7,7 @@ from tweets.api.serializers import (
     TweetSerializerForDetail,
 )
 from tweets.models import Tweet
+from tweets.services import TweetService
 from newsfeeds.services import NewsFeedService
 from utils.decorators import required_params
 from utils.paginations import EndlessPagination
@@ -23,9 +24,7 @@ class TweetViewSet(viewsets.GenericViewSet):
     # 根据当前用户信息获取相应的推文
     @required_params(params=['user_id'])
     def list(self, request):
-        tweets = Tweet.objects.filter(
-            user_id=request.query_params['user_id']
-        ).order_by('-created_at')
+        tweets = TweetService.get_cached_tweets(user_id=request.query_params['user_id'])
 
         tweets = self.paginate_queryset(tweets)
 
