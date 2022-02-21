@@ -7,6 +7,7 @@ from rest_framework.test import APIClient
 from tweets.models import Tweet
 from newsfeeds.models import NewsFeed
 from django.core.cache import caches
+from utils.redis_client import RedisClient
 
 
 # 因为基本所有的测试都需要创建用户或者创建推文，我们就在这里创建两个通用的函数
@@ -59,4 +60,5 @@ class TestCase(DjangoTestCase):
         return NewsFeed.objects.create(user=user, tweet=tweet)
 
     def clear_cache(self):
+        RedisClient.clear()
         caches['testing'].clear()
