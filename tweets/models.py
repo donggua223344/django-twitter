@@ -20,6 +20,9 @@ class Tweet(models.Model):
     content = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    likes_count = models.IntegerField(default=0, null=True)
+    comments_count = models.IntegerField(default=0, null=True)
+
     # 建立 user 和 created_at 的联合索引 (composite index), 相当于在数据库里新建了一个索引表单
     # 建立了索引后也需要做migration
     class Meta:
@@ -74,6 +77,7 @@ class TweetPhoto(models.Model):
     has_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
 
     class Meta:
         index_together = (

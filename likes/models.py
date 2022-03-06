@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.db.models.signals import pre_delete, post_save
+from likes.listeners import incr_likes_count, decr_likes_count
 from utils.memcached_helper import MemcachedHelper
 
 
@@ -23,7 +25,7 @@ class Like(models.Model):
         # unique_together创建的索引具有唯一性，是在数据库层面的限制
         unique_together = (('user', 'content_type', 'object_id'),)
         index_together = (('content_type', 'object_id', 'created_at'),
-                          ('user', 'content_type', 'created_at'), )
+                          ('user', 'content_type', 'created_at'),)
 
     def __str__(self):
         return '{} - {} liked {} {}'.format(
@@ -36,3 +38,7 @@ class Like(models.Model):
     @property
     def cached_user(self):
         return MemcachedHelper.get_object_through_cache(User, self.user_id)
+
+
+pre_delete.connect(decr_likes_count, sender=Like)
+post_save.connect(incr_likes_count, sender=Like)
