@@ -11,6 +11,8 @@ from friendships.api.serializers import (
 )
 from django.contrib.auth.models import User
 from friendships.paginations import FriendshipPagination
+from django.utils.decorators import method_decorator
+from ratelimit.decorators import ratelimit
 
 
 class FriendshipViewSet(viewsets.GenericViewSet):
@@ -23,6 +25,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
     # GET /api/friendships/1/followers/
     # AllowAny的意思是说任何用户都可以进行这个操作
     @action(methods=['GET'], detail=True, permission_classes=[AllowAny])
+    @method_decorator(ratelimit(key='user_or_ip', rate='3/s', method='GET', block=True))
     def followers(self, request, pk):
         friendships = Friendship.objects.filter(to_user_id=pk).order_by('-created_at')
         page = self.paginate_queryset(friendships)
@@ -31,6 +34,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
 
     # 看某个用户关注了哪些人的API接口
     @action(methods=['GET'], detail=True, permission_classes=[AllowAny])
+    @method_decorator(ratelimit(key='user_or_ip', rate='3/s', method='GET', block=True))
     def followings(self, request, pk):
         friendships = Friendship.objects.filter(from_user_id=pk).order_by('-created_at')
         page = self.paginate_queryset(friendships)
@@ -40,6 +44,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
     # 用户关注别人的API接口
     # 比如是已经登陆的用户才能进行此操作
     @action(methods=['POST'], detail=True, permission_classes=[IsAuthenticated])
+    @method_decorator(ratelimit(key='user', rate='10/s', method='POST', block=True))
     def follow(self, request, pk):
         # 特殊判断重复 follow 的情况，比如前端点击了多次follow按钮
         # 静默处理，不报错，直接 return Response
@@ -69,6 +74,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
 
     # 用户取关别人的API接口
     @action(methods=['POST'], detail=True, permission_classes=[IsAuthenticated])
+    @method_decorator(ratelimit(key='user', rate='10/s', method='POST', block=True))
     def unfollow(self, request, pk):
         # 注意 pk 的类型是string, 所以要做类型转换
         # 用户不能取关自己
