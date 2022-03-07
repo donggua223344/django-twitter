@@ -1,8 +1,3 @@
-from django.contrib.auth.models import User
-from rest_framework import viewsets
-from rest_framework import permissions
-from rest_framework.decorators import action
-from rest_framework.response import Response
 from accounts.api.serializers import (
     LoginSerializer,
     SignupSerializer,
@@ -16,6 +11,14 @@ from django.contrib.auth import (
     logout as django_logout,
     authenticate as django_authenticate,
 )
+from django.contrib.auth.models import User
+from django.utils.decorators import method_decorator
+from ratelimit.decorators import ratelimit
+from rest_framework import permissions
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from utils.permissions import IsObjectOwner
 
 
@@ -32,6 +35,7 @@ class AccountViewSet(viewsets.ViewSet):
     serializer_class = SignupSerializer
 
     @action(methods=['GET'], detail=False)
+    @method_decorator(ratelimit(key='ip', rate='3/s', method='GET', block=True))
     def login_status(self, request):
         data = {'has_logged_in': request.user.is_authenticated,
                 'ip': request.META['REMOTE_ADDR']
@@ -41,11 +45,13 @@ class AccountViewSet(viewsets.ViewSet):
         return Response(data)
 
     @action(methods=['POST'], detail=False)
+    @method_decorator(ratelimit(key='ip', rate='3/s', method='POST', block=True))
     def logout(self, request):
         django_logout(request)
         return Response({'success': True})
 
     @action(methods=['POST'], detail=False)
+    @method_decorator(ratelimit(key='ip', rate='3/s', method='POST', block=True))
     def login(self, request):
         # get username and password from request
         serializer = LoginSerializer(data=request.data)
@@ -83,6 +89,7 @@ class AccountViewSet(viewsets.ViewSet):
         })
 
     @action(methods=['POST'], detail=False)
+    @method_decorator(ratelimit(key='ip', rate='3/s', method='POST', block=True))
     def signup(self, request):
         # validate the username, email and password
         serializer = SignupSerializer(data=request.data)
